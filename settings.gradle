@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Xmlbased"
+rootProject.name = "Jbasedapp"
 include ':app'
