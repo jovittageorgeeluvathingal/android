@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="409dp"
+        android:layout_height="729dp"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
+
+        <CheckBox
+            android:id="@+id/c1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="sslc"
+            android:onClick="sslc"/>
+
+        <CheckBox
+            android:id="@+id/c2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="plus two"
+            android:onClick="plustwo"/>
+
+        <CheckBox
+            android:id="@+id/c3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="UG"
+            android:onClick="onug"/>
+
+        <EditText
+            android:id="@+id/et1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:text="" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+package com.example.examsample;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.media.MediaTimestamp;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.EditText;
+
+public class MainActivity extends AppCompatActivity {
+    CheckBox c1,c2,c3;
+    EditText e1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        c1=(CheckBox) findViewById(R.id.c1);
+        c2=(CheckBox) findViewById(R.id.c2);
+        c3=(CheckBox) findViewById(R.id.c3);
+        e1=(EditText) findViewById(R.id.et1);
+
+    }
+    public void sslc(View v){
+        String str="";
+        if(c1.isChecked())
+            str="sslc";
+        else {
+            c2.setChecked(false);
+            c3.setChecked(false);
+            str="";
+        }
+
+        e1.setText(str);
+    }
+    public void plustwo(View v){
+        String str="";
+        if(c2.isChecked())
+        {
+            c1.setChecked(true);
+            str="plus two sslc";
+        }
+        else{
+            c1.setChecked(true);
+            c3.setChecked(false);
+            str="sslc";
+        }
+        e1.setText(str);
+
+    }
+    public void onug(View v){
+        String str="";
+        if(c3.isChecked())
+        {
+            c1.setChecked(true);
+            c2.setChecked(true);
+            str="UG, plus two,sslc";
+        }
+        else{
+            c1.setChecked(true);
+            c2.setChecked(true);
+            str=" plus two,sslc";
+        }
+        e1.setText(str);
+
+    }
+}
