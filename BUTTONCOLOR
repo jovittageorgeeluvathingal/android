@@ -1,0 +1,56 @@
+package com.example.prj1;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+
+import java.util.Random;
+public class MainActivity extends AppCompatActivity {
+    private int[] mColorChoices =
+            { Color.BLUE, Color.CYAN,
+                    Color.DKGRAY, Color.GRAY, Color.GREEN,
+                    Color.LTGRAY, Color.MAGENTA, Color.RED,
+                    Color.WHITE, Color.YELLOW };
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+    public void randomizeColor(View button) {
+        Random generator = new Random();
+        int index = generator.nextInt(mColorChoices.length);
+        button.setBackgroundColor(mColorChoices[index]);
+    }
+
+}
+
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:text="button1"
+        android:onClick="randomizeColor"/>
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:text="button2"
+        android:onClick="randomizeColor"/>
+    <TextView
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:textSize="48px"
+        android:gravity="center_horizontal"
+        android:text=" click on the button to see the color change "/>
+</LinearLayout>
