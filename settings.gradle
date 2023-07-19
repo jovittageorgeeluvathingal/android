@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "valuepass"
+rootProject.name = "simpleActivity"
 include ':app'
