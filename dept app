@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="409dp"
+        android:layout_height="729dp"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
+
+        <EditText
+            android:id="@+id/e1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/e2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/e3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/bsave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:onClick="onsave"/>
+
+        <Button
+            android:id="@+id/bfind"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Find"
+            android:onClick="onfind"/>
+
+        <Button
+            android:id="@+id/bdelete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="delete "
+            android:onClick="ondelete"/>
+
+        <Button
+            android:id="@+id/bdelete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="update"
+            android:onClick="onupdate"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+              package com.example.deptapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+    EditText e1,e2,e3;
+    CDB db;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        e1 = (EditText) findViewById(R.id.e1);
+        e2 = (EditText) findViewById(R.id.e2);
+        e3 = (EditText) findViewById(R.id.e3);
+        db = new CDB(this);
+
+    }
+    public void onsave (View v)
+    {
+        String dn,dl;
+        dn =e2.getText().toString();
+        dl =e3.getText().toString();
+        Toast.makeText(this,dn+dl,3 ).show();
+        db.addDept(dn,dl);
+        e2.setText("");
+        e3.setText("");
+    }
+    public  void onfind (View v)
+    {
+        String a[];
+        try{
+            String dno =e1.getText().toString();
+            a= db.getOneDepartment(Integer.parseInt(dno));
+            if(a[0]!="")
+            {
+                e2.setText( a[0]);
+                e3.setText(a[1]);
+            }
+            else
+            {
+                Toast.makeText(this, "this not found ..",3).show();
+            }
+        }
+        catch  (Exception e)
+    {
+            System.out.println(e);
+
+    }
+        public  void ondelete (View v)
+    {
+       String dno =e1.getText().toString();
+       db.deleteDept(Integer.parseInt(dno));
+       e2.setText("");
+       e3.setText("");
+    }
+ public void onupdate(View v)
+ {
+     String dno =e1.getText().toString();
+     String dn,dl;
+     dn =e2.getText().toString();
+     dl=e3.getText().toString();
+     db.update(Integer.parseInt(dno),dn,dl);
+     e2.setText("");
+     e3.setText("");
+ }
+
+}
+
+
+
+  package com.example.deptapp;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+public class CDB extends SQLiteOpenHelper {
+    private  static final int DATABASE_VERSION =1;
+
+    private static final String DATABASE_NAME="DMS";
+    public CDB(Context context)
+    {
+        super
+                (context,DATABASE_NAME,null,DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("create table TbDept (dno integer primary key autoincrement,dname text,dloc text)");
+
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS TbDept");
+        onCreate(db);
+    }
+    public void addDept(String dn,String dl)
+    {
+        try
+        {
+            SQLiteDatabase db =this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+            cv.put("dname",dn);
+            cv.put("dloc",dl);
+            db.insert("TbDept",null,cv);
+            db.close();
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+        }
+    }
+    public String[] getOneDepartment(int dno)
+    {
+        String a[] = new String[2];
+        try{
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor =db.query("TbDept",new String[]{ "dno","dname","dloc"}, "dno" + "=?", new String[]{ String.valueOf(dno)},
+                    null,null,null);
+            if(cursor != null && cursor.getCount() !=0)
+            {
+                cursor.moveToFirst();
+                a[0]= cursor.getString(1);
+                a[1]= cursor.getString(2);
+            }
+            else
+            {
+                a[0] ="";
+                a[1]="";
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+            Log.d("select :",e.toString());
+
+    }
+        return a;
+    }
+     public int deleteDept(int dno)
+     {
+         SQLiteDatabase db  = this.getWritableDatabase();
+         return db.delete("TbDept","dno =?", new String[]{ String.valueOf(dno)});
+
+     }
+     public void update( int dno,String dn, String dl)
+     {
+         SQLiteDatabase db = this.getWritableDatabase();
+         ContentValues values = new ContentValues();
+         values.put("dname" ,dn);
+         values.put("dloc",dl);
+         db.update("TbDept",values,"dno =?",new String[] {String.valueOf(dno)});
+         db.close();
+
+     }
+
+}
