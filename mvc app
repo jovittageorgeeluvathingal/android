@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="409dp"
+        android:layout_height="729dp"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
+
+        <EditText
+            android:id="@+id/e2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/e3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/bsave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onsave"
+            android:text="save" />
+
+        <Button
+            android:id="@+id/blist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onlist"
+            android:text="LIst" />
+
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="match_parent"
+            android:layout_height="58dp" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+package com.example.mvc_dbapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+    EditText e2,e3;
+    CDB db;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        e2=(EditText) findViewById(R.id.e2);
+        e3=(EditText) findViewById(R.id.e3);
+        db = new CDB(this);
+    }
+    public void onsave(View v)
+    {
+        CDept rec = new CDept();
+        rec.dname = e2.getText().toString();
+        rec.dloc =e3.getText().toString();
+        db.addDept(rec);
+        e2.setText("");
+        e3.setText("");
+    }
+     public void onlist (View v)
+     {
+         List<CDept> rec =db.getAllvalues();
+         String str ="";
+         for(CDept cr : rec ){
+             String  log ="DId :" +cr.id + ", DNAME : " + cr.dname + " ,DLOC  :" +cr.dloc;
+             log =log+"\n";
+             str = str + log;
+         }
+         TextView t = (TextView) findViewById(R.id.tv);
+         t.setText(str);
+     }
+}
+
+
+package com.example.mvc_dbapp;
+
+public class CDept {
+    int id;
+    String dname;
+    String dloc;
+}
+package com.example.mvc_dbapp;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CDB extends SQLiteOpenHelper {
+    private  static final int DATABASE_VERSION =1;
+    private  static  final String DATABASE_NAME ="DMS";
+    public CDB (Context context)
+    {
+        super(context,DATABASE_NAME,null,DATABASE_VERSION);
+    }
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("create table TbDept (dno integer primary key autoincrement,dname text,dloc text)");
+
+    }
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS TbDept");
+        onCreate(db);
+    }
+
+    public void addDept(CDept d)
+    {
+         try
+         {
+             SQLiteDatabase db =this.getWritableDatabase();
+             ContentValues cv = new ContentValues();
+             cv.put("dname",d.dname);
+             cv.put("dloc",d.dloc);
+             db.insert("TbDept",null,cv);
+             db.close();
+
+         }
+         catch (Exception e)
+
+         {
+             System.out.println(e);
+         }
+    }
+    public List<CDept> getAllvalues()
+    {
+        List<CDept> recList = new ArrayList<CDept>();
+        String selectQueery ="select *from tbDept";
+        SQLiteDatabase db =this.getReadableDatabase();
+        String selectQuery = null;
+        Cursor cursor =db.rawQuery(selectQuery,null);
+        if(cursor.moveToFirst()){
+            do{
+                CDept rec = new CDept();
+                rec.id=Integer.parseInt(cursor.getString(0));
+                rec.dname= cursor.getString(1);
+                rec.dloc=cursor.getString(2);
+                recList.add(rec);
+
+            }
+            while (cursor.moveToNext());
+        }
+        return recList;
+    }
+}
