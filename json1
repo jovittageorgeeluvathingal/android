@@ -1,0 +1,31 @@
+package com.example.json1;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.widget.TextView;
+
+import org.json.JSONObject;
+
+public class MainActivity extends AppCompatActivity {
+    public  static final String
+    JSON_STRING="{\"employee \" :{ \"name\":\"sachin\",\"salary\":56000}}";
+    /** called when the activity is first created **/
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        try {
+            JSONObject emp = (new JSONObject(JSON_STRING)).getJSONObject("employee");
+            String empname = emp.getString("name");
+            int empsalary = emp.getInt("salary");
+            String str = "Employeename :" + empname + "\n" + "employee Salary :" + empsalary;
+            TextView1.setText(str);
+        }
+        catch (Exception e)
+        {
+            System.out.println("e");
+        }
+    }
+
+}
