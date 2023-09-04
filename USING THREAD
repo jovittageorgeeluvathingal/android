@@ -1,0 +1,112 @@
+package com.example.p_threaddemo;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity implements Runnable {
+    ProgressBar pb1,pb2;
+    int pv =0;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        pb1 = (ProgressBar) findViewById(R.id.pb1);
+        pb2 = (ProgressBar) findViewById(R.id.pb2);
+        pb1.setMax(100);
+        pb2.setMax(100);
+        pb1.setProgress(0);
+        pb2.setProgress(0);
+        pb2.setEnabled(false);
+    }
+    public void onb1 (View  v){
+        if(pv== 100)
+             pv =0;
+        pv+= 10;
+        pb1.setProgress(pv);
+
+    }
+    public void onb2(View  v){
+         pv =0;
+         pb2.setEnabled(true);
+         Thread t;
+         t=new Thread(this);
+         t.start();
+    }
+    public void run ()
+    {
+        try {
+            while (pv <= 100)
+            {
+                Thread.sleep(200);
+                pv+=10;
+                pb1.setProgress(pv);
+                pb2.setProgress(pv);
+            }
+            pb2.setEnabled(false);
+            Toast.makeText(this,"completed ...",3).show();
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+}
+
+==========  XML ==========
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="409dp"
+        android:layout_height="354dp"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
+
+        <ProgressBar
+            android:id="@+id/pb1"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="45dp" />
+
+        <ProgressBar
+            android:id="@+id/pb2"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="52dp" />
+
+        <Button
+            android:id="@+id/b1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="progress"
+            android:onClick="onb1"/>
+
+        <Button
+            android:id="@+id/b2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="thread progress"
+            android:onClick="onb2"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
