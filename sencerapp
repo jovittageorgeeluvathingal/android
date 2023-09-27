@@ -1,0 +1,30 @@
+package com.example.sencerapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+    TextView tv1=null;
+    private SensorManager msensorManger;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        tv1 =(TextView) findViewById(R.id.textView);
+        tv1.setVisibility(View.GONE);
+        msensorManger =(SensorManager) getSystemService(SEARCH_SERVICE);
+        List<Sensor>mList = msensorManger.getSensorList(Sensor.TYPE_ALL);
+        for(int i=1; i<mList.size();i++){
+            tv1.setVisibility(View.VISIBLE);
+            tv1.append("\n" +mList.get(i).getName()+"\n"+ mList.get(i).getVendor() + "\n" +mList.get(i).getVersion());
+        }
+    }
+
+}
